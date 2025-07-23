@@ -1,7 +1,5 @@
 import telebot
-import config
-
-bot = telebot.TeleBot(config.TOKEN)
+from init import bot
 
 @bot.message_handler(commands=['start'])
 def start(message):
