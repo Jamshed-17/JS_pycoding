@@ -2,16 +2,17 @@ from database.models import *
 # from models import *
 from sqlalchemy.orm import Session
 
-def add_user(user_id: str, complites: str = "", admin: bool = False):
+def add_user(user_id: str, complites: str = "", admin: bool = False, page_number: int = 1):
     """Добавляет пользователя
     Поля:
     user_id - telegram username
     complites - выполненые таски (дефолт - отстствие)
     admin - является ли пользователь администратором"""
+    user_id = user_id.lower()
     with Session(autoflush=False, bind=engine) as db:
         if db.query(User).filter(User.user_id==user_id).first(): return "Пользователь уже существует"
         else:
-            new_user = User(user_id = user_id, admin = admin, complite_tasks = complites)
+            new_user = User(user_id = user_id, admin = admin, complite_tasks = complites, page_number = page_number)
             db.add(new_user)
             db.commit()
             return f"Чел {new_user.user_id} супер успешно добавлен"
@@ -33,6 +34,7 @@ def select_one_user_from_id(id: int):
     
 def select_one_user_from_use(user_id: str):
     """Возвращает пользователя по username"""
+    user_id = user_id.lower()
     with Session(autoflush=False, bind=engine) as db:
         this_user = db.query(User).filter(User.user_id == user_id).first()
         return this_user.id
@@ -64,6 +66,36 @@ def complites_id(id):
 
 def is_admin(user_id: str):
     """Поверяет админ ли пользователь"""
+    user_id = user_id.lower()
     with Session(autoflush=False, bind=engine) as db:
         check_user = db.query(User).filter(User.user_id==user_id).first()
         return True if check_user.admin == True else False
+
+def user_page_number(user_id: str):
+    """Возвращает номер страницы таксов человека"""
+    user_id = user_id.lower()
+    with Session(autoflush=False, bind=engine) as db:
+        user_number = db.query(User).filter(User.user_id==user_id).first()
+        return user_number.page_number
+    
+def next_page(user_id: str):
+    user_id = user_id.lower()
+    with Session(autoflush=False, bind=engine) as db:
+        data_user = db.query(User).filter(User.user_id==user_id).first()
+        if data_user != None:
+            data_user.page_number += 1
+            db.commit()
+            return data_user.page_number
+        
+def pre_page(user_id: str):
+    user_id = user_id.lower()
+    with Session(autoflush=False, bind=engine) as db:
+        data_user = db.query(User).filter(User.user_id==user_id).first()
+        if data_user != None:
+            data_user.page_number -= 1
+            db.commit()
+            return data_user.page_number
+        
+def is_complite(user_id: str, task_id: int):
+    user_id = user_id.lower()
+    return True if task_id in complites_use(user_id) else False

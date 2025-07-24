@@ -14,6 +14,7 @@ class User(Base):
     user_id = Column(String, nullable=False)
     complite_tasks = Column(Text)
     admin = Column(Boolean, default=False)
+    page_number = Column(Integer)
 
 Base.metadata.create_all(bind=engine)
 
