@@ -1,14 +1,23 @@
 from database.models import *
+# from models import *
 from sqlalchemy.orm import Session
 
-def add_user(user_id: str, complites: str, admin: bool = False):
+def add_user(user_id: str, complites: str = "", admin: bool = False):
+    """Добавляет пользователя
+    Поля:
+    user_id - telegram username
+    complites - выполненые таски (дефолт - отстствие)
+    admin - является ли пользователь администратором"""
     with Session(autoflush=False, bind=engine) as db:
-        new_user = User(user_id = user_id, admin = admin, complite_tasks = complites)
-        db.add(new_user)
-        db.commit()
-        return f"Чел {new_user.user_id} супер успешно добавлен"
+        if db.query(User).filter(User.user_id==user_id).first(): return "Пользователь уже существует"
+        else:
+            new_user = User(user_id = user_id, admin = admin, complite_tasks = complites)
+            db.add(new_user)
+            db.commit()
+            return f"Чел {new_user.user_id} супер успешно добавлен"
 
 def select_all_users():
+    """Возвращает всех пользователей"""
     with Session(autoflush=False, bind=engine) as db:
         all_users = db.query(User).all()
         count = ""
@@ -17,16 +26,19 @@ def select_all_users():
         return count
     
 def select_one_user_from_id(id: int):
+    """Возвращает пользователя по id"""
     with Session(autoflush=False, bind=engine) as db:
         user_count = db.get(User, id)
         return f"{user_count.user_id}; {user_count.complite_tasks}"
     
 def select_one_user_from_use(user_id: str):
+    """Возвращает пользователя по username"""
     with Session(autoflush=False, bind=engine) as db:
         this_user = db.query(User).filter(User.user_id == user_id).first()
         return this_user.id
 
 def update_user_complites(id_us: int, complites: str):
+    """Добавляет в поле complites выаолненые задания"""
     with Session(autoflush=False, bind=engine) as db:
         data_user = db.query(User).filter(User.id==id_us).first()
         if data_user != None:
@@ -35,6 +47,7 @@ def update_user_complites(id_us: int, complites: str):
             return f"{data_user.user_id}; {data_user.complite_tasks}"
         
 def delete_user(id):
+    """Удаляет пользователя по id"""
     with Session(autoflush=False, bind=engine) as db:
         user_for_delete = db.query(User).filter(User.id==id).first()
         db.delete(user_for_delete)
@@ -42,13 +55,15 @@ def delete_user(id):
         return "Чел успешно удалён"
 
 def complites_use(user_id):
+    """Возвращает все выполненые задания пользователя по username"""
     return select_one_user_from_id(select_one_user_from_use(user_id)).split(";")[1][:-2].replace(" ", "").split(",")
 
 def complites_id(id):
+    """Возвращает все выполненые задания пользователя по id"""
     return select_one_user_from_id(id).split(";")[1][:-2].replace(" ", "").split(",")
 
-def is_admin(user_id):
+def is_admin(user_id: str):
+    """Поверяет админ ли пользователь"""
     with Session(autoflush=False, bind=engine) as db:
-        user = db.query(User).filter(User.user_id==user_id).first()
-        return True if user.admin == True else False
-    
+        check_user = db.query(User).filter(User.user_id==user_id).first()
+        return True if check_user.admin == True else False
