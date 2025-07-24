@@ -1,5 +1,5 @@
 from database.models import engine, Base
-import config
+import config as config
 from telebot import TeleBot
 
 bot = TeleBot(config.TOKEN)
