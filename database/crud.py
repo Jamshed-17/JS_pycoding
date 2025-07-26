@@ -1,3 +1,6 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
 from database.models import *
 # from models import *
 from sqlalchemy.orm import Session
@@ -44,7 +47,7 @@ def update_user_complites(id_us: int, complites: str):
     with Session(autoflush=False, bind=engine) as db:
         data_user = db.query(User).filter(User.id==id_us).first()
         if data_user != None:
-            data_user.complite_tasks += complites
+            data_user.complite_tasks += f"{complites}, "
             db.commit()
             return f"{data_user.user_id}; {data_user.complite_tasks}"
         
@@ -58,7 +61,9 @@ def delete_user(id):
 
 def complites_use(user_id):
     """Возвращает все выполненые задания пользователя по username"""
-    return select_one_user_from_id(select_one_user_from_use(user_id)).split(";")[1][:-2].replace(" ", "").split(",")
+    with Session(autoflush=False, bind=engine) as db:
+        user_cmp = db.query(User).filter(User.user_id==user_id).first()
+        return user_cmp.complite_tasks
 
 def complites_id(id):
     """Возвращает все выполненые задания пользователя по id"""
@@ -98,4 +103,9 @@ def pre_page(user_id: str):
         
 def is_complite(user_id: str, task_id: int):
     user_id = user_id.lower()
-    return True if task_id in complites_use(user_id) else False
+    return True if str(task_id) in complites_use(user_id) else False
+
+# user_id = "jamshed17"
+# print(is_complite("jamshed17", 3))
+# print(complites_use(user_id))
+# print(update_user_complites(select_one_user_from_use(user_id), str(2)))

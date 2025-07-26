@@ -55,10 +55,3 @@ def test_solution(task_id, user_code):
             return [False, f"❌ Рандомный тест провален: {test['input']} -> Ожидалось {expected}, получено {actual}"]
 
     return [True, "Все тесты пройдены"]
-
-user_code = """
-function sum(a, b) {
-  return a + b;
-}
-"""
-print(test_solution(1, user_code)) 

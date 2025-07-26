@@ -1,0 +1,8 @@
+{
+    "vscode-pets.theme": "winter",
+    "vscode-pets.disableEffects": false,
+    "vscode-pets.petSize": "small",
+    "vscode-pets.petType": "chicken",
+    "vscode-pets.throwBallWithMouse": true,
+    "vscode-pets.petColor": "black"
+}
