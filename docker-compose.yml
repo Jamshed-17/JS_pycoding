@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  bot:
+    build: 
+      context: .
+      network: host  # Использует сеть хоста при сборке
+    network_mode: host  # Запускает контейнер в сети хоста
+    volumes:
+      - bot_data:/js-pybot_app/data  # Том для БД
+    restart: unless-stopped
+
+volumes:
+  bot_data:
