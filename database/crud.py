@@ -62,6 +62,7 @@ def delete_user(id):
 def complites_use(user_id):
     """Возвращает все выполненые задания пользователя по username"""
     with Session(autoflush=False, bind=engine) as db:
+        user_id = user_id.lower()
         user_cmp = db.query(User).filter(User.user_id==user_id).first()
         return user_cmp.complite_tasks
 
