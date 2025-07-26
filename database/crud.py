@@ -84,6 +84,7 @@ def user_page_number(user_id: str):
         return user_number.page_number
     
 def next_page(user_id: str):
+    """Отправляет пользователя на следующую старницу"""
     user_id = user_id.lower()
     with Session(autoflush=False, bind=engine) as db:
         data_user = db.query(User).filter(User.user_id==user_id).first()
@@ -93,6 +94,7 @@ def next_page(user_id: str):
             return data_user.page_number
         
 def pre_page(user_id: str):
+    """Отправляет пользователя на предыдущую страницу"""
     user_id = user_id.lower()
     with Session(autoflush=False, bind=engine) as db:
         data_user = db.query(User).filter(User.user_id==user_id).first()
@@ -102,6 +104,7 @@ def pre_page(user_id: str):
             return data_user.page_number
         
 def is_complite(user_id: str, task_id: int):
+    """Проверяет выполненно ли задание у пользователя"""
     user_id = user_id.lower()
     return True if str(task_id) in complites_use(user_id) else False
 

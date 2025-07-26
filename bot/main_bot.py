@@ -58,6 +58,7 @@ def tasks(message):
     bot.send_message(message.chat.id, text="Выберите таску", reply_markup=markup)
 
 def task_print(message, task_id: int):
+    bot.clear_step_handler(message)
     this_task = task_work.task_info(task_id)
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton("← Назад", callback_data="to-page"), InlineKeyboardButton("GO!", callback_data=f"task-go=={task_id}"))
@@ -71,6 +72,11 @@ def task_try(message, task_id: int):
     bot.register_next_step_handler(message, lambda msg: testing_tasks(msg, task_id))
 
 def testing_tasks(message, task_id: int):
+    if message.text.lower() in ["/start", "отмена", "назад"]:
+        user_panel(message)  # Возвращаем в меню
+        return
+    if hasattr(message, 'data') and message.data == "to-page":
+        return
     request_try = task_work.task_trying(task_id, message.text, message.chat.username)
     if type(request_try) == str:
         bot.send_message(message.chat.id, text=f"Задание провалено:\n{request_try}")
@@ -101,6 +107,7 @@ def callback_query(call):
         task_try(call.message, task_id=int(req[0].replace("task-go==", "")))
 
     elif req[0] == "to-page":
+        bot.clear_step_handler_by_chat_id(call.message.chat.id)
         page = user_page_number(call.message.chat.username)
         markup = InlineKeyboardMarkup()
         for task_id in range(page*5-4, (page*5)+1):
