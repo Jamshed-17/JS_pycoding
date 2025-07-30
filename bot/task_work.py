@@ -43,9 +43,9 @@ def complite_tasks(user_id: str):
     
     return f"""
 ✅ *Твой прогресс:*
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+
  {progress_bar} {progress_percent}% 
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
 
 Решённые задачи:
 {chr(10).join(task_lines)}

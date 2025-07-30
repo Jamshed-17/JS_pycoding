@@ -2,3 +2,5 @@ config.py
 data
 __*
 test.py
+.venv
+.vscode

@@ -109,7 +109,13 @@ def is_complite(user_id: str, task_id: int):
     user_id = user_id.lower()
     return True if str(task_id) in complites_use(user_id) else False
 
-# user_id = "jamshed17"
-# print(is_complite("jamshed17", 3))
-# print(complites_use(user_id))
-# print(update_user_complites(select_one_user_from_use(user_id), str(2)))
+def add_admin(user_id: str):
+    """Добавляет пользователю True в поле admin"""
+    user_id = user_id.lower()
+    with Session(autoflush=False, bind=engine) as db:
+        new_admin = db.query(User).filter(User.user_id==user_id).first()
+        if new_admin != None:
+            new_admin.admin = True
+            db.commit()
+            return "Админ добавлен"
+        else: return "Такого пользователя нет"

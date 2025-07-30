@@ -2,9 +2,7 @@
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
-
 import telebot
-from admin_bot import *
 import config
 from database.crud import *
 import os
@@ -54,14 +52,17 @@ def generate_tasks_markup(username, page):
 @bot.message_handler(commands=['start'])
 def start(message):
     username = message.chat.username.lower()
-    if add_user(user_id=username, admin=(username == "jamshed1737377")) == "Пользователь уже существует":
-        if is_admin(username):
-            admin_panel(bot, message)
-        else:
-            user_panel(message)
+    if add_user(user_id=username) == "Пользователь уже существует":
+        if username=="jamshed17": add_admin("jamshed17")
+        user_panel(message)
     else:
         bot.send_message(message.chat.id, text="Привет! Этот бот поможет тебе не забыть основы JS и сможет дать минимальную необходимую практику, чтобы не забыть совсем всё. Своего рода минимальная версия CodeWars прямо в телеграме.")
         user_panel(message)
+
+@bot.message_handler(commands=["users"])
+def users(message):
+    if is_admin(message.chat.username):
+        bot.send_message(message.chat.id, text=select_all_users().replace("; ", ". @", 1).replace(";", ""), parse_mode="Markdown")
 
 def user_panel(message):
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
