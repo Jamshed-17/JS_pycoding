@@ -9,6 +9,8 @@ services:
     volumes:
       - bot_data:/js-pybot_app/data  # Том для БД
     restart: unless-stopped
+    deploy:  # <-- Добавьте этот блок
+      replicas: 1  # Только одна копия контейнера
 
 volumes:
   bot_data:
