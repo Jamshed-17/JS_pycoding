@@ -27,7 +27,10 @@ def select_all_users(mode: str = "to_print"):
         count = ""
         if mode == "to_print":
             for user in all_users:
-                count += f"{user.id}. @{user.user_id} - tasks: {" ".join(sorted(set(user.complite_tasks.split(", "))))}\n" if user.admin == False else f"@{user.user_id} - *\n"
+                a = user.complite_tasks.split(", ")
+                q = set(a)
+                tasks = " ".join(sorted(q))
+                count += f"{user.id}. @{user.user_id} - tasks: {tasks}\n" if user.admin == False else f"@{user.user_id} - ★\n"
         else:
             for user in all_users:
                 count += f"{user.id}; {user.user_id}; {user.complite_tasks}" if user.admin == False else f"\n{user.id}; {user.user_id}; {user.complite_tasks} - АДМИН"
