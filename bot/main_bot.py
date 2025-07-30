@@ -62,7 +62,7 @@ def start(message):
 @bot.message_handler(commands=["users"])
 def users(message):
     if is_admin(message.chat.username):
-        bot.send_message(message.chat.id, text=select_all_users().replace("; ", ". @", 1).replace(";", ""), parse_mode="Markdown")
+        bot.send_message(message.chat.id, text=select_all_users("to_print"))
 
 def user_panel(message):
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)

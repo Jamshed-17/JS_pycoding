@@ -20,13 +20,17 @@ def add_user(user_id: str, complites: str = "", admin: bool = False, page_number
             db.commit()
             return f"Чел {new_user.user_id} супер успешно добавлен"
 
-def select_all_users():
+def select_all_users(mode: str = "to_print"):
     """Возвращает всех пользователей"""
     with Session(autoflush=False, bind=engine) as db:
         all_users = db.query(User).all()
         count = ""
-        for user in all_users:
-            count += f"\n{user.id}; {user.user_id}; {user.complite_tasks}" if user.admin == False else f"\n{user.id}; {user.user_id}; {user.complite_tasks} - АДМИН"
+        if mode == "to_print":
+            for user in all_users:
+                count += f"{user.id}. @{user.user_id} - tasks: {" ".join(sorted(set(user.complite_tasks.split(", "))))}\n" if user.admin == False else f"@{user.user_id} - *\n"
+        else:
+            for user in all_users:
+                count += f"{user.id}; {user.user_id}; {user.complite_tasks}" if user.admin == False else f"\n{user.id}; {user.user_id}; {user.complite_tasks} - АДМИН"
         return count
     
 def select_one_user_from_id(id: int):
